@@ -3,7 +3,7 @@ kind: Apps
 
 requires:
   - name: ticker
-    title: Ticker (long-lived dependency, serve true)
+    title: "Ticker (long-lived dependency, serve true)"
     check: node tcp-check.js 47110
     start: node ticker.js
     serve: true
@@ -13,7 +13,7 @@ requires:
 
 apps:
   - name: api
-    title: Throwaway API (no port: reserved)
+    title: "Throwaway API (no port: reserved)"
     command: node server.js ${port}
     ready:
       url: "http://127.0.0.1:${port}/health"
@@ -37,7 +37,7 @@ apps:
               timeoutSeconds: 60
 
   - name: web
-    title: Throwaway web (references the api before it runs)
+    title: "Throwaway web (references the api before it runs)"
     command: node server.js ${port}
     ready:
       url: "http://127.0.0.1:${port}/health"
