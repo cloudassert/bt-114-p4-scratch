@@ -4,8 +4,8 @@ kind: Apps
 requires:
   - name: ticker
     title: "Ticker (long-lived dependency, serve true)"
-    check: node tcp-check.js 47110
-    start: node ticker.js
+    check: node bt-114-p4-scratch/tcp-check.js 47110
+    start: node bt-114-p4-scratch/ticker.js
     serve: true
     ready:
       tcp: "127.0.0.1:47110"
