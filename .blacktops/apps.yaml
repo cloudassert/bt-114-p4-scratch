@@ -1,0 +1,46 @@
+apiVersion: blacktops.ai/v1
+kind: Apps
+
+requires:
+  - name: ticker
+    title: Ticker (long-lived dependency, serve true)
+    check: node tcp-check.js 47110
+    start: node ticker.js
+    serve: true
+    ready:
+      tcp: "127.0.0.1:47110"
+      timeoutSeconds: 30
+
+apps:
+  - name: api
+    title: Throwaway API (no port: reserved)
+    command: node server.js ${port}
+    ready:
+      url: "http://127.0.0.1:${port}/health"
+      timeoutSeconds: 60
+    dependsOn: [ticker]
+    setup:
+      groups:
+        deps:
+          on: [prepare]
+          steps:
+            - name: hello
+              run: node -e "console.log('deps step')"
+              inputs: [server.js]
+              timeoutSeconds: 60
+        build:
+          on: [prepare]
+          steps:
+            - name: hello
+              run: node -e "console.log('build step')"
+              inputs: [server.js]
+              timeoutSeconds: 60
+
+  - name: web
+    title: Throwaway web (references the api before it runs)
+    command: node server.js ${port}
+    ready:
+      url: "http://127.0.0.1:${port}/health"
+      timeoutSeconds: 60
+    env:
+      API_URL: "${apps.api.localUrl}"
